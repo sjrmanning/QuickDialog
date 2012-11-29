@@ -37,6 +37,9 @@
 @property(nonatomic, retain) NSString *title;
 @property(nonatomic, retain) NSString *footer;
 @property(nonatomic, retain) NSMutableArray * elements;
+@property(nonatomic, retain) NSMutableArray * beforeTemplateElements;
+@property(nonatomic, retain) NSMutableArray * afterTemplateElements;
+
 @property(nonatomic, assign) QRootElement *rootElement;
 
 @property(nonatomic, readonly) BOOL needsEditing;
@@ -50,6 +53,8 @@
 @property(nonatomic) CGRect entryPosition;
 @property(nonatomic, strong) NSDictionary *elementTemplate;
 
+@property(nonatomic, assign) BOOL hidden;
+@property(nonatomic, readonly) NSUInteger visibleIndex;
 
 @property(nonatomic, assign) BOOL canDeleteRows;
 
@@ -58,6 +63,10 @@
 - (void)addElement:(QElement *)element;
 - (void)insertElement:(QElement *)element atIndex:(NSUInteger)index;
 - (NSUInteger)indexOfElement:(QElement *)element;
+
+- (QElement *)getVisibleElementForIndex:(NSInteger)index;
+- (NSInteger)visibleNumberOfElements;
+- (NSUInteger)getVisibleIndexForElement:(QElement*)element;
 
 - (void)bindToObject:(id)data;
 - (void)fetchValueIntoObject:(id)obj;

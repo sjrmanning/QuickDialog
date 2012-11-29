@@ -12,6 +12,7 @@
 // permissions and limitations under the License.
 //
 
+#import "QuickDialogController.h"
 
 @interface QuickDialogController ()
 
@@ -24,12 +25,15 @@
     BOOL _keyboardVisible;
     BOOL _viewOnScreen;
     BOOL _resizeWhenKeyboardPresented;
+    UIPopoverController *_popoverForChildRoot;
 }
 
 @synthesize root = _root;
 @synthesize willDisappearCallback = _willDisappearCallback;
 @synthesize quickDialogTableView = _quickDialogTableView;
 @synthesize resizeWhenKeyboardPresented = _resizeWhenKeyboardPresented;
+@synthesize popoverBeingPresented = _popoverBeingPresented;
+@synthesize popoverForChildRoot = _popoverForChildRoot;
 
 
 + (QuickDialogController *)buildControllerWithClass:(Class)controllerClass root:(QRootElement *)root {
@@ -62,7 +66,12 @@
 - (void)loadView {
     [super loadView];
     self.quickDialogTableView = [[QuickDialogTableView alloc] initWithController:self];
-    self.view = self.quickDialogTableView;
+}
+
+- (void)setQuickDialogTableView:(QuickDialogTableView *)tableView
+{
+    _quickDialogTableView = tableView;
+    self.view = tableView;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -106,32 +115,6 @@
         _willDisappearCallback();
     }
 }
-
-- (void)popToPreviousRootElementOnMainThread {
-    if (self.navigationController!=nil){
-        [self.navigationController popViewControllerAnimated:YES];
-    } else {
-        [self dismissModalViewControllerAnimated:YES];
-    }
-}
-
-- (void)popToPreviousRootElement {
-    [self performSelectorOnMainThread:@selector(popToPreviousRootElementOnMainThread) withObject:nil waitUntilDone:YES];
-}
-
-- (void)displayViewController:(UIViewController *)newController {
-    if (self.navigationController != nil ){
-        [self.navigationController pushViewController:newController animated:YES];
-    } else {
-        [self presentModalViewController:newController animated:YES];
-    }
-}
-
-- (void)displayViewControllerForRoot:(QRootElement *)root {
-    QuickDialogController *newController = [self controllerForRoot: root];
-    [self displayViewController:newController];
-}
-
 
 - (QuickDialogController *)controllerForRoot:(QRootElement *)root {
     Class controllerClass = [[self class] controllerClassForRoot:root];
